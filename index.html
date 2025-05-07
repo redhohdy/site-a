@@ -1,37 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-M9SJ7J5R');</script>
+    <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <title>Site A - GA4 Cross Domain</title>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
     <script>
-        const myConfig = {
-            measurement_id: {
-                amild: 'Q0M8VSMG8Z',
-                marlboro: 'FMSMYXCPPJ',
-                magnum: 'VECWPT7Y1V',
-                djisamsoe: '2CQ38WYFTM',
-                sampoernakretek: 'C1RMFCHWZ8'
-            }
-        };
-
-        function measurement_id(brand_name) {
-            let id = '';
-            if (brand_name.includes("amild")) {
-                id = myConfig.measurement_id.amild;
-            } else if (brand_name.includes("marlboro")) {
-                id = myConfig.measurement_id.marlboro;
-            } else if (brand_name.includes("magnum")) {
-                id = myConfig.measurement_id.magnum;
-            } else if (brand_name.includes("djisamsoe")) {
-                id = myConfig.measurement_id.djisamsoe;
-            } else if (brand_name.includes("sampoernakretek")) {
-                id = myConfig.measurement_id.sampoernakretek;
-            } else {
-                id = myConfig.measurement_id.amild;
-            }
-            return id;
-        }
+        const measurementId = 'G-YSZGG1X5V3';
 
         function getGA() {
             let ga = typeof window !== 'undefined' && window[window['GoogleAnalyticsObject']];
@@ -41,15 +22,14 @@
             return '';
         }
 
-        function getGL(brand) {
+        function getGL() {
             let ga = getGA();
-            let measurementId = measurement_id(brand.toLowerCase());
-            let id = typeof window !== "undefined" && Cookies.get('_ga_' + measurementId)?.substring(6);
-            if (ga && id && window.google_tag_data?.glBridge?.generate) {
+            let gaCookie = typeof window !== "undefined" && Cookies.get('_ga_' + measurementId)?.substring(6);
+            if (ga && gaCookie && window.google_tag_data?.glBridge?.generate) {
                 let payload = {
                     _ga: ga,
                 };
-                payload['_ga_' + measurementId] = id;
+                payload['_ga_' + measurementId] = gaCookie;
                 let gl = window.google_tag_data.glBridge.generate(payload);
                 return `${gl}&_ga=${ga}`;
             }
@@ -57,8 +37,7 @@
         }
 
         function attachGLParams() {
-            const brand = "amild"; // Ganti sesuai brand yang diinginkan
-            const glParams = getGL(brand);
+            const glParams = getGL();
             const link = document.getElementById("to-site-b");
             link.href = "https://site-b-alpha.vercel.app/?" + glParams;
         }
@@ -67,6 +46,10 @@
     </script>
 </head>
 <body>
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M9SJ7J5R"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <h1>Site A</h1>
     <p>Click below to go to Site B with GA4 cross-domain parameters:</p>
     <a id="to-site-b" href="#">Go to Site B</a>
