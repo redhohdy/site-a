@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Site A - GA4 Cross Domain</title>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <script>
+        const myConfig = {
+            measurement_id: {
+                amild: 'Q0M8VSMG8Z',
+                marlboro: 'FMSMYXCPPJ',
+                magnum: 'VECWPT7Y1V',
+                djisamsoe: '2CQ38WYFTM',
+                sampoernakretek: 'C1RMFCHWZ8'
+            }
+        };
+
+        function measurement_id(brand_name) {
+            let id = '';
+            if (brand_name.includes("amild")) {
+                id = myConfig.measurement_id.amild;
+            } else if (brand_name.includes("marlboro")) {
+                id = myConfig.measurement_id.marlboro;
+            } else if (brand_name.includes("magnum")) {
+                id = myConfig.measurement_id.magnum;
+            } else if (brand_name.includes("djisamsoe")) {
+                id = myConfig.measurement_id.djisamsoe;
+            } else if (brand_name.includes("sampoernakretek")) {
+                id = myConfig.measurement_id.sampoernakretek;
+            } else {
+                id = myConfig.measurement_id.amild;
+            }
+            return id;
+        }
+
+        function getGA() {
+            let ga = typeof window !== 'undefined' && window[window['GoogleAnalyticsObject']];
+            if (ga && ga.getAll()[0]) {
+                return ga.getAll()[0].get('linkerParam')?.split('=')[1];
+            }
+            return '';
+        }
+
+        function getGL(brand) {
+            let ga = getGA();
+            let measurementId = measurement_id(brand.toLowerCase());
+            let id = typeof window !== "undefined" && Cookies.get('_ga_' + measurementId)?.substring(6);
+            if (ga && id && window.google_tag_data?.glBridge?.generate) {
+                let payload = {
+                    _ga: ga,
+                };
+                payload['_ga_' + measurementId] = id;
+                let gl = window.google_tag_data.glBridge.generate(payload);
+                return `${gl}&_ga=${ga}`;
+            }
+            return '';
+        }
+
+        function attachGLParams() {
+            const brand = "amild"; // Ganti sesuai brand
+            const glParams = getGL(brand);
+            const link = document.getElementById("to-site-b");
+            link.href = "../site-b/index.html?" + glParams;
+        }
+
+        window.onload = attachGLParams;
+    </script>
+</head>
+<body>
+    <h1>Site A</h1>
+    <p>Click below to go to Site B with GA4 cross-domain parameters:</p>
+    <a id="to-site-b" href="#">Go to Site B</a>
+</body>
+</html>
